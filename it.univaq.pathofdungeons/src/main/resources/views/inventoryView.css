@@ -1,0 +1,36 @@
+.unequipped{
+    -fx-opacity: 0.4;
+}
+.equipped{
+    -fx-opacity: 1;
+}
+.border{
+    -fx-background-color: black, white;
+}
+.border-br{
+    -fx-background-insets: 0, 0 1 1 0;
+}
+.border-all{
+    -fx-background-insets: 0, 1 1 1 1;
+}
+.border-bl{
+    -fx-background-insets: 0, 0 0 1 1;
+}
+.border-tl{
+    -fx-background-insets: 0, 1 0 0 1;
+}
+.border-tr{
+    -fx-background-insets: 0, 1 1 0 0;
+}
+.border-brt{
+    -fx-background-insets: 0, 1 1 1 0;
+}
+.border-brl{
+    -fx-background-insets: 0, 0 1 1 1;
+}
+.border-tlb{
+    -fx-background-insets: 0, 1 0 1 1;
+}
+.border-tlr{
+    -fx-background-insets: 0, 1 1 0 1;
+}

@@ -1,0 +1,38 @@
+{
+    "MAXHEALTH":
+    {
+        "max":15,
+        "min":3,
+        "weight":20
+    },
+    "MAXMANA":
+    {
+        "max": 15,
+        "min": 3,
+        "weight": 20
+    },
+    "HEALTHREGEN":
+    {
+        "max":15,
+        "min":3,
+        "weight":15
+    },
+    "PHYSDEFENCE":
+    {
+        "max":15,
+        "min":3,
+        "weight":15
+    },
+    "MAGICDEFENCE":
+    {
+        "max":15,
+        "min":3,
+        "weight":15
+    },
+    "MANAREGEN":
+    {
+        "max":15,
+        "min":3,
+        "weight":15
+    }
+}

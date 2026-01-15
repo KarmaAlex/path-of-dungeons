@@ -1,0 +1,26 @@
+{
+    "MAXHEALTH":
+    {
+        "max":15,
+        "min":3,
+        "weight":50
+    },
+    "HEALTHREGEN":
+    {
+        "max":15,
+        "min":3,
+        "weight":17
+    },
+    "PHYSDEFENCE":
+    {
+        "max":15,
+        "min":3,
+        "weight":17
+    },
+    "MAGICDEFENCE":
+    {
+        "max":15,
+        "min":3,
+        "weight":16
+    }
+}

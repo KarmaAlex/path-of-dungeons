@@ -1,0 +1,26 @@
+{
+    "PHYSDEFENCE":
+    {
+        "max":15,
+        "min":3,
+        "weight":30
+    },
+    "MAGICDEFENCE":
+    {
+        "max":15,
+        "min":3,
+        "weight":30
+    },
+    "PHYSATTACK":
+    {
+        "max":15,
+        "min":3,
+        "weight":20
+    },
+    "MAGICATTACK":
+    {
+        "max":15,
+        "min":3,
+        "weight":20
+    }
+}

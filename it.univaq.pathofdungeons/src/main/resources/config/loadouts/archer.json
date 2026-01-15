@@ -1,0 +1,14 @@
+{
+    "helmet":{
+        "base": {
+            "name": "Hunter hood",
+            "slot": "HELMET"
+        },
+        "effect":"BURN",
+        "rarity":"COMMON",
+        "stats":{
+            "CRITCHANCE":1,
+            "MAXHEALTH":15
+        }
+    }
+}

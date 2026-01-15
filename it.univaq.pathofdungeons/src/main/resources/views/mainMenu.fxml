@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<SplitPane dividerPositions="0.5" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.univaq.pathofdungeons.controller.MainMenuController">
+   <items>
+      <AnchorPane minWidth="640.0" prefHeight="200.0" prefWidth="200.0">
+         <children>
+            <Label layoutX="252.0" layoutY="35.0" text="Carica Partita">
+               <font>
+                  <Font name="System Bold" size="20.0" />
+               </font>
+            </Label>
+         </children>
+      </AnchorPane>
+      <AnchorPane minWidth="640.0" prefHeight="200.0" prefWidth="200.0">
+         <children>
+            <Label layoutX="248.0" layoutY="35.0" text="Nuova Partita">
+               <font>
+                  <Font name="System Bold" size="20.0" />
+               </font>
+            </Label>
+            <Label layoutX="241.0" layoutY="88.0" text="Dimensione del dungeon" />
+            <ChoiceBox fx:id="sizeInput" layoutX="243.0" layoutY="117.0" prefWidth="150.0" />
+            <Label layoutX="257.0" layoutY="162.0" text="Numero di giocatori" />
+            <ChoiceBox fx:id="playersInput" layoutX="245.0" layoutY="192.0" prefWidth="150.0" />
+            <Button fx:id="submitBtn" layoutX="280.0" layoutY="233.0" mnemonicParsing="false" text="Seleziona" />
+            <Label fx:id="playerLabel1" layoutX="65.0" layoutY="266.0" text="Nome giocatore 1" visible="false" />
+            <TextField fx:id="playerName1" layoutX="39.0" layoutY="296.0" visible="false" />
+            <ChoiceBox fx:id="classInput1" layoutX="245.0" layoutY="296.0" prefWidth="150.0" visible="false" />
+            <Label fx:id="playerLabel2" layoutX="65.0" layoutY="336.0" text="Nome giocatore 2" visible="false" />
+            <TextField fx:id="playerName3" layoutX="39.0" layoutY="436.0" visible="false" />
+            <ChoiceBox fx:id="classInput2" layoutX="245.0" layoutY="366.0" prefWidth="150.0" visible="false" />
+            <Label fx:id="playerLabel3" layoutX="65.0" layoutY="406.0" text="Nome giocatore 3" visible="false" />
+            <TextField fx:id="playerName4" layoutX="39.0" layoutY="506.0" visible="false" />
+            <ChoiceBox fx:id="classInput3" layoutX="245.0" layoutY="436.0" prefWidth="150.0" visible="false" />
+            <Label fx:id="playerLabel4" layoutX="65.0" layoutY="476.0" text="Nome giocatore 4" visible="false" />
+            <TextField fx:id="playerName2" layoutX="39.0" layoutY="366.0" visible="false" />
+            <ChoiceBox fx:id="classInput4" layoutX="245.0" layoutY="506.0" prefWidth="150.0" visible="false" />
+            <Button fx:id="playBtn" layoutX="294.0" layoutY="545.0" mnemonicParsing="false" text="Gioca" visible="false" />
+         </children>
+      </AnchorPane>
+   </items>
+</SplitPane>

@@ -1,0 +1,12 @@
+.border{
+    -fx-border-width: 2;
+    -fx-border-color: black;
+}
+
+.entityButton{
+    -fx-background-color: blue;
+}
+
+.entitySelected{
+    -fx-background-color: green;
+}
