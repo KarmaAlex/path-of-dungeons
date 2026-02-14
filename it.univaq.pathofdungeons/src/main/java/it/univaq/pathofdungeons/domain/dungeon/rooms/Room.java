@@ -1,22 +1,26 @@
 package it.univaq.pathofdungeons.domain.dungeon.rooms;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 import it.univaq.pathofdungeons.domain.dungeon.DungeonDirections;
 import it.univaq.pathofdungeons.domain.entity.enemies.Enemy;
 import it.univaq.pathofdungeons.domain.entity.player.Player;
-import it.univaq.pathofdungeons.domain.items.Item;
 
-public abstract class Room {
+/**
+ * Abstract class that represents a generic room
+ */
+public abstract class Room implements Serializable{
     private ArrayList<Room> adjacent;
-    private LinkedList<Item> items;
     private RoomTypes roomType;
     private boolean explored = false;
     private LinkedList<Enemy> enemies;
+    private String info;
 
-    public Room(RoomTypes roomType){
-        items = new LinkedList<>();
+    protected Room(RoomTypes roomType, String info){
+        this.info = info;
         adjacent = new ArrayList<>(DungeonDirections.values().length);
         for(int i = 0; i < DungeonDirections.values().length; i++){
             adjacent.add(null);
@@ -38,7 +42,7 @@ public abstract class Room {
      * to this method to be visible
      * @return A copy of the ArrayList that contains adjacent rooms
      */
-    public ArrayList<Room> getAdjacent(){ return new ArrayList<>(adjacent); }
+    public List<Room> getAdjacent(){ return new ArrayList<>(adjacent); }
 
     /**
      * Sets the room next to this one in the dir direction to the given one
@@ -51,23 +55,15 @@ public abstract class Room {
 
     public boolean getExplored(){ return this.explored; }
 
-    public LinkedList<Item> getItems(){ return this.items; }
-
-    public Item swapItems(Item pickup, Item equipped){
-        if(items.remove(pickup)){
-            this.items.add(equipped);
-            return pickup;
-        }
-        return null; 
-    }
-
-    public Item getItem(int i){ return this.items.get(i); }
-
-    public LinkedList<Enemy> getEnemies(){ return this.enemies; }
+    public List<Enemy> getEnemies(){ return this.enemies; }
 
     protected void setExplored(boolean explored){ this.explored = explored; }
 
     public abstract void onEnter();
 
-    public abstract void onInteract(LinkedList<Player> players);
+    public void onInteract(List<Player> players){}
+
+    public String getInfo(){ return this.info; }
+
+    protected void setInfo(String info){ this.info = info; }
 }

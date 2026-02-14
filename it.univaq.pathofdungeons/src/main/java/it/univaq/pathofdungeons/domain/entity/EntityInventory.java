@@ -1,96 +1,78 @@
 package it.univaq.pathofdungeons.domain.entity;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import it.univaq.pathofdungeons.domain.Loadout;
-import it.univaq.pathofdungeons.domain.items.Consumable;
 import it.univaq.pathofdungeons.domain.items.EquipSlots;
-import it.univaq.pathofdungeons.domain.items.Item;
+import it.univaq.pathofdungeons.domain.items.ItemSlot;
+import it.univaq.pathofdungeons.domain.items.Slot;
 import it.univaq.pathofdungeons.domain.items.equippable.Equippable;
+import it.univaq.pathofdungeons.domain.items.equippable.EquippableSlot;
 
-public class EntityInventory {
-    private static final int EQUIP_SLOTS_NUM = 5;
-    private static final int ITEM_SLOTS_NUM = 5;
-    private HashMap<EquipSlots, Equippable> equips;
-    private ArrayList<Equippable> equipSlots;
-    private ArrayList<Consumable> itemSlots;
-    private int numEquips;
-    private int numItems;
+/**
+ * Class that represents the inventory of an entity. Contains
+ * slots for equipping items and several slots to store other items into
+ */
+public class EntityInventory implements Serializable{
+    private static final int EQUIP_SLOTS_NUM = 8;
+    private static final int ITEM_SLOTS_NUM = 15;
+    private HashMap<EquipSlots, EquippableSlot> equips;
+    private ArrayList<Slot> itemSlots;
     private int gold;
 
     public EntityInventory(){
         this.equips = new HashMap<>();
         for(EquipSlots s: EquipSlots.values()){
-            equips.put(s, null);
+            equips.put(s, new EquippableSlot(s));
         }
-        equipSlots = new ArrayList<>(EQUIP_SLOTS_NUM);
         itemSlots = new ArrayList<>(ITEM_SLOTS_NUM);
-        numEquips = 0;
-        numItems = 0;
+        for(int i = 0; i < ITEM_SLOTS_NUM; i++){
+            itemSlots.add(new ItemSlot());
+        }
         gold = 0;
     }
 
+    /**
+     * Initializes the inventory by equipping the items contained in the loadout
+     * @param loadout
+     */
     public EntityInventory(Loadout loadout){
         this();
         for(Equippable e: loadout.getAllSlots()){
-            if(e != null) equips.put(e.getSlot(), e);
-        }
-    }
-
-    public Equippable getItemSlot(EquipSlots s){ return equips.get(s); }
-
-    public Equippable equipItem(Equippable e){
-        Equippable equipped = equips.get(e.getSlot());
-        equips.put(e.getSlot(), e);
-        return equipped;
-    }
-
-    public boolean addToEquipSlots(Equippable e){
-        if(this.isEquipSlotsFull()) return false;
-        if(this.tryAddToList(this.equipSlots, e)){
-            numEquips++;
-            return true;
-        }
-        return false;
-    }
-
-    public boolean addToItemSlots(Consumable item){
-        if(this.isItemSlotsFull() && !(this.itemSlots.contains(item))) return false;
-        if(!(this.itemSlots.contains(item))){
-            if(this.isItemSlotsFull()) return false;
-            if(this.tryAddToList(this.itemSlots, item)){
-                numItems++;
-                return true;
+            if(e != null){
+                equips.get(e.getSlot()).setItem(e);
             }
-            return false;
-        }
-        else{
-            if(this.itemSlots.get(this.itemSlots.indexOf(item)).addStack(item.getAmount())) return true;
-            return false;
         }
     }
 
-    private <T extends Item> boolean tryAddToList(ArrayList<T> list, T item){
-        for(int i = 0; i < list.size(); i++){
-            if(list.get(i) != null) continue;
-            list.set(i, item);
-            return true;
-        }
-        return false;
-    }
+    public EquippableSlot getEquipSlot(EquipSlots s){ return equips.get(s); }
+    public List<Slot> getItemSlots(){ return this.itemSlots; }
 
-    public boolean isEquipSlotsFull(){ return numEquips >= EQUIP_SLOTS_NUM; }
-    public boolean isItemSlotsFull(){ return numItems >= ITEM_SLOTS_NUM; }
-    public void addGold(int amount){ this.gold += amount; }
-    public void removeGold(int amount){ this.gold -= amount; }
+    public boolean isEquipSlotsFull(){
+        int numEquips = 0;
+        for(EquippableSlot e: equips.values()){
+            if(e.getItem() != null) numEquips++;
+        }
+        return numEquips >= EQUIP_SLOTS_NUM;
+    }
+    public boolean isItemSlotsFull(){
+        int numItems = 0;
+        for(Slot s: itemSlots){
+            if(s.getItem() != null) numItems++;
+        }
+        return numItems >= ITEM_SLOTS_NUM;
+    }
     public int getGold(){ return this.gold; }
+    public void setGold(int amount){ this.gold = amount; }
 
     @Override
     public String toString(){
         StringBuilder sb = new StringBuilder();
-        for(Equippable e: this.equips.values()){
-            if(e != null) sb.append(String.format("[Slot: %s, Item: %s] ", e.getSlot(), e.toString()));
+        for(EquippableSlot e: this.equips.values()){
+            if(e != null) sb.append(String.format("[Slot: %s, Item: %s] ", e.getSlot(), e.getItem().toString()));
         }
         return sb.toString();
     }

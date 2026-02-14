@@ -11,6 +11,9 @@ import it.univaq.pathofdungeons.domain.spells.Spells;
  * Factory that produces Spell objects as needed
  */
 public class SpellFactory{
+
+    private SpellFactory(){}
+
     /**
      * Get a spell based on the requested Spells object
      * @param spell Spells object corresponding to the desired spell

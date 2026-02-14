@@ -10,5 +10,6 @@ public enum TargetTypes {
     ENEMY,
     ALLY,
     ALLY_SELF,
-    ALL_BUT_SELF
+    ALL_BUT_SELF,
+    ALL_ENEMIES
 }

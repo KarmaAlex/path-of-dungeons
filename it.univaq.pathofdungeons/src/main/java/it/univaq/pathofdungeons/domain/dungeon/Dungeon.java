@@ -1,9 +1,14 @@
 package it.univaq.pathofdungeons.domain.dungeon;
 
+import java.io.Serializable;
+
 import it.univaq.pathofdungeons.domain.dungeon.rooms.Room;
 import it.univaq.pathofdungeons.game.DungeonService;
 
-public class Dungeon {
+/**
+ * Class that represents the dungeon
+ */
+public class Dungeon implements Serializable{
     private Room startingRoom;
     private DungeonGrid grid;
     private Room currentRoom;
@@ -34,12 +39,12 @@ public class Dungeon {
 
         for(int i = 0; i < out.length; i += 2){
             for(int j = 0; j < out[i].length; j += 2){
-                Room currentRoom = grid.get(new DungeonCoords(i/2, j/2));
-                if(currentRoom != null){
-                    if(currentRoom.equals(this.currentRoom)) out[i][j] = "C";
+                Room currGenRoom = grid.get(new DungeonCoords(i/2, j/2));
+                if(currGenRoom != null){
+                    if(currGenRoom.equals(this.currentRoom)) out[i][j] = "C";
                     else out[i][j] = "R";
                     for(DungeonDirections d: DungeonDirections.values()){
-                        if(currentRoom.getRoom(d) != null){
+                        if(currGenRoom.getRoom(d) != null){
                             out[i + d.offsetX()][j + d.offsetY()] = "-";
                         }
                         else{

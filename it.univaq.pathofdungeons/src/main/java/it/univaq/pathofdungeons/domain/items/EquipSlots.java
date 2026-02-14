@@ -3,11 +3,13 @@ package it.univaq.pathofdungeons.domain.items;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.Map;
 
 import com.alibaba.fastjson2.JSONObject;
 import com.alibaba.fastjson2.JSON;
 
 import it.univaq.pathofdungeons.domain.entity.EntityStats;
+import it.univaq.pathofdungeons.utils.FileLogger;
 
 public enum EquipSlots {
     HELMET,
@@ -19,6 +21,7 @@ public enum EquipSlots {
     LRING,
     RRING;
 
+    //Load possible stats for each slot in a map so we don't have to do any IO calls while generating items
     static{
         final String BASE_PATH = "config/item_stats/"; 
         final String EXT = ".json";
@@ -36,7 +39,7 @@ public enum EquipSlots {
                 es.setStats(stats);
             }
         } catch(IOException e){
-            e.printStackTrace();
+            FileLogger.getInstance().error(e.getMessage());
         }
     }
 
@@ -44,5 +47,10 @@ public enum EquipSlots {
 
     private void setStats(HashMap<EntityStats, EquippableStatInfo> stats){ this.possibleStats = stats; }
 
-    public HashMap<EntityStats, EquippableStatInfo> getStatWeights(){ return this.possibleStats; }
+    public Map<EntityStats, EquippableStatInfo> getStatWeights(){ return this.possibleStats; }
+
+    @Override
+    public String toString(){
+        return this.name().charAt(0) + this.name().substring(1).toLowerCase();
+    }
 }

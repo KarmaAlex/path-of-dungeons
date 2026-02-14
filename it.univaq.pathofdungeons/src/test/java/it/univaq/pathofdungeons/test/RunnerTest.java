@@ -11,14 +11,14 @@ import it.univaq.pathofdungeons.domain.dungeon.DungeonSizes;
 import it.univaq.pathofdungeons.domain.items.equippable.Equippable;
 import it.univaq.pathofdungeons.domain.items.equippable.Rarities;
 import it.univaq.pathofdungeons.game.impl.DungeonGenerator;
-import it.univaq.pathofdungeons.game.impl.EquippableFactory;
+import it.univaq.pathofdungeons.game.impl.ItemFactory;
 
 class RunnerTest {
 	
 	public Runner it;
 
 	@BeforeEach
-	public void setUp() {
+	void setUp() {
 		it = new Runner();
 	}
 
@@ -51,14 +51,14 @@ class RunnerTest {
 
 	@Test
 	void testRandomItem(){
-		System.out.println(EquippableFactory.getRandomItem());
+		System.out.println(ItemFactory.getRandomEquippable());
 		assertTrue(true);
 	}
 
 	@Test
 	void testRandomItems(){
 		for(int i = 0; i < 1000; i++){
-			Equippable item = EquippableFactory.getRandomItem();
+			Equippable item = ItemFactory.getRandomEquippable();
 			assertEquals(item.getRarity().getNumStats(), item.getStats().size());
 			if(item.getRarity().equals(Rarities.EPIC) || item.getRarity().equals(Rarities.LEGENDARY)) assertNotNull(item.getEffect());
 			if(item.getRarity().equals(Rarities.LEGENDARY)) assertNotNull(item.getSpell());

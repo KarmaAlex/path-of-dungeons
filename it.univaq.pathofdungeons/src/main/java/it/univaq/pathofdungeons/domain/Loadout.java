@@ -2,6 +2,7 @@ package it.univaq.pathofdungeons.domain;
 
 import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.List;
 
 import it.univaq.pathofdungeons.domain.items.equippable.Boots;
 import it.univaq.pathofdungeons.domain.items.equippable.Chestpiece;
@@ -38,10 +39,10 @@ public class Loadout {
     public Ring getRing1(){ return this.ring1; }
     public Ring getRing2(){ return this.ring2; }
     public Boots getBoots(){ return this.boots; }
-    public LinkedList<Equippable> getAllSlots(){ return new LinkedList<>(Arrays.asList(this.gloves, this.helmet, this.chestplate, this.ring1, this.ring2, this.boots)); }
+    public List<Equippable> getAllSlots(){ return new LinkedList<>(Arrays.asList(this.gloves, this.helmet, this.chestplate, this.ring1, this.ring2, this.boots)); }
 
     @Override
     public String toString(){
-        return String.format("Helmet: %s\n Chestplate: %s\n Gloves: %s\n Left ring: %s\n Right ring: %s\n Boots: %s", helmet, chestplate, gloves, ring1, ring2, boots);
+        return String.format("Helmet: %s%n Chestplate: %s%n Gloves: %s%n Left ring: %s%n Right ring: %s%n Boots: %s", helmet, chestplate, gloves, ring1, ring2, boots);
     }
 }

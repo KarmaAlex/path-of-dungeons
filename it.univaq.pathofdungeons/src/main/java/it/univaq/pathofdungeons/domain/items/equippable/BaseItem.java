@@ -1,8 +1,13 @@
 package it.univaq.pathofdungeons.domain.items.equippable;
 
+import java.io.Serializable;
+
 import it.univaq.pathofdungeons.domain.items.EquipSlots;
 
-public class BaseItem {
+/**
+ * Class that represents a base item, meaning one with no stats, just a name and slot
+ */
+public class BaseItem implements Serializable{
     private String name;
     private EquipSlots slot;
 
@@ -13,7 +18,4 @@ public class BaseItem {
 
     public String getName(){ return this.name; }
     public EquipSlots getSlot(){ return this.slot; }
-
-    @Override
-    public String toString(){ return this.name; }
 }

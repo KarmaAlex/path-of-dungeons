@@ -1,5 +1,7 @@
 package it.univaq.pathofdungeons.domain.entity.player;
 
+import it.univaq.pathofdungeons.utils.StringUtils;
+
 public enum PlayerClasses {
     WARRIOR,
     MAGE,
@@ -8,6 +10,6 @@ public enum PlayerClasses {
 
     @Override
     public String toString(){
-        return this.name().substring(0, 1).toUpperCase() + this.name().substring(1).toLowerCase();
+        return StringUtils.capitalize(this.name());
     }
 }

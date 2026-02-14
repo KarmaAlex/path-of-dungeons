@@ -4,4 +4,8 @@ public class MissingTargetException extends Exception{
     public MissingTargetException(){
         super();
     }
+
+    public MissingTargetException(String msg){
+        super(msg);
+    }
 }

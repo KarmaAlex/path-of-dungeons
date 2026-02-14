@@ -1,5 +1,10 @@
 package it.univaq.pathofdungeons.domain.items.equippable;
 
+import it.univaq.pathofdungeons.utils.StringUtils;
+
+/**
+ * Possible rarities of an equippable item
+ */
 public enum Rarities {
     COMMON(40, 1.0f, 1),
     UNCOMMON(30, 1.25f, 1),
@@ -20,4 +25,9 @@ public enum Rarities {
     public int getChance(){ return this.chance; }
     public float getStatMult(){ return this.statMult; }
     public int getNumStats(){ return this.numStats; }
+    
+    @Override
+    public String toString(){
+        return StringUtils.capitalize(this.name());
+    }
 }

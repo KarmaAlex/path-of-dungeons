@@ -14,6 +14,6 @@ public class Heal extends Spell{
 
     @Override
     public void applySpell(Entity source, Entity target){
-        this.applySpellEffect(source);
+        this.applySpellEffect(source, source);
     }
 }

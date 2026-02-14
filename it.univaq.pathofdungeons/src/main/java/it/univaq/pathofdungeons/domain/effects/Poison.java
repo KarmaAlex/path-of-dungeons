@@ -1,28 +1,22 @@
 package it.univaq.pathofdungeons.domain.effects;
 
 import it.univaq.pathofdungeons.domain.entity.Entity;
-import it.univaq.pathofdungeons.domain.entity.EntityStats;
+import it.univaq.pathofdungeons.game.impl.EffectService;
 
 public class Poison extends Effect{
-    private static final int POISON_DAMAGE = 5;
-    private static final int POISON_DURATION = 3;
-
-    private int duration;
+    private static final int POISON_DAMAGE = 3;
+    private static final int POISON_DURATION = 6;
 
     public Poison() {
-        super(Effects.POISON);
-        duration = 0;
+        super(Effects.POISON, true, POISON_DURATION);
     }
 
     @Override
     public void onTurnStart(Entity target){
-        target.updateStat(EntityStats.HEALTH, -POISON_DAMAGE);
-        duration--;
-        if(duration < 1){ target.removeEffect(this); }
+        int damage = POISON_DAMAGE * target.getEffects().get(this.getType()).getStacks();
+        target.takeDamage(damage, false);
+        target.getEffects().get(this.getType()).decrDuration();
+        if(target.getEffects().get(this.getType()).getDuration() < 1){ EffectService.removeEffect(this, target); }
     }
 
-    @Override
-    public void addStack(){
-        this.duration += POISON_DURATION;
-    }
 }

@@ -10,8 +10,9 @@ import it.univaq.pathofdungeons.game.BattleService;
 import it.univaq.pathofdungeons.game.EntityService;
 import it.univaq.pathofdungeons.game.MissingManaException;
 import it.univaq.pathofdungeons.game.MissingTargetException;
+import it.univaq.pathofdungeons.utils.FileLogger;
 
-public class EnemyServiceImpl implements EntityService {
+public class EnemyServiceImpl implements EntityService{
 
     private Random rand = new Random();
     private static final BattleActions[] enemyActions = new BattleActions[] {BattleActions.ATTACK, BattleActions.DEFEND, BattleActions.SPELL};
@@ -25,10 +26,10 @@ public class EnemyServiceImpl implements EntityService {
         switch (ba) {
             case ATTACK:
             try{
-                bs.attack(target);
+                bs.attack(entity, target);
                 break;
             } catch(MissingTargetException e){
-                e.printStackTrace();
+                FileLogger.getInstance().error(e.getMessage());
                 break;
             }
             case DEFEND:
@@ -36,20 +37,16 @@ public class EnemyServiceImpl implements EntityService {
                 break;
             case SPELL:
             try{
-                if(entity.getSpells().size() < 1) bs.attack(target);
-                else bs.spell(target, entity.getSpells().get(rand.nextInt(entity.getSpells().size())));
+                if(entity.getSpells().isEmpty()) bs.attack(entity, target);
+                else bs.spell(entity.getSpells().get(rand.nextInt(entity.getSpells().size())), entity, target);
                 break;
-            } catch (MissingTargetException e){
-                e.printStackTrace();
-                break;
-            } catch(MissingManaException e){
-                e.printStackTrace();
+            } catch (MissingTargetException | MissingManaException e){
+                FileLogger.getInstance().error(e.getMessage());
                 break;
             }
             default:
                 break;
         }
-        System.out.println(entity + " chose action " + ba + " targeting player: " + target);
         return true;
     }
 

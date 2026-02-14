@@ -2,6 +2,9 @@ package it.univaq.pathofdungeons.controller;
 
 import javafx.scene.control.Labeled;
 
+/**
+ * Class that represents the status of an entity and is used in the interface during battles
+ */
 public class EntityStatus {
     private Labeled nameLabel;
     private Labeled healthLabel;

@@ -9,6 +9,9 @@ import it.univaq.pathofdungeons.game.EntityService;
  * Factory that returns entity services for the corresponding entity
  */
 public class EntityServiceFactory{
+
+    private EntityServiceFactory(){}
+
     /**
      * Returns an implementation of the EntityService interface based on what class is passed as an argument
      * @param <T> any class that extends Entity

@@ -1,14 +1,25 @@
 {
     "helmet":{
         "base": {
-            "name": "Hunter hood",
+            "name": "Wizard hat",
             "slot": "HELMET"
         },
-        "effect":"BURN",
         "rarity":"COMMON",
         "stats":{
-            "CRITCHANCE":1,
+            "CRITCHANCE":3,
             "MAXHEALTH":15
+        }
+    },
+    "WEAPON":{
+        "base": {
+            "name": "Magic wand",
+            "slot": "WEAPON"
+        },
+        "effect": "BURN",
+        "rarity": "COMMON",
+        "stats": {
+            "MAGICDAMAGE": 15,
+            "PHYSDAMAGE": 5
         }
     }
 }

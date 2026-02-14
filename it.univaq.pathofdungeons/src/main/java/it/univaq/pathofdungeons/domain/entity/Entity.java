@@ -1,41 +1,46 @@
 package it.univaq.pathofdungeons.domain.entity;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 import it.univaq.pathofdungeons.domain.BasicAttack;
 import it.univaq.pathofdungeons.domain.BattleAction;
 import it.univaq.pathofdungeons.domain.BattleActions;
 import it.univaq.pathofdungeons.domain.Defend;
-import it.univaq.pathofdungeons.domain.SpecialAttack;
 import it.univaq.pathofdungeons.domain.TargetTypes;
 import it.univaq.pathofdungeons.domain.effects.Effect;
+import it.univaq.pathofdungeons.domain.effects.EffectInfo;
 import it.univaq.pathofdungeons.domain.effects.Effects;
+import it.univaq.pathofdungeons.domain.specials.SpecialAttack;
 import it.univaq.pathofdungeons.domain.spells.Spell;
 import it.univaq.pathofdungeons.game.EntityService;
+import it.univaq.pathofdungeons.utils.BattleLogger;
 
 /**
  * Class that represents a generic entity with stats, a series of actions they can perform in battle,
  * spells they can use, effects and an associated EntityService.
  */
-public abstract class Entity implements Comparable<Entity>{
-    private final static int MAX_SPELLS = 5;
+public abstract class Entity implements Comparable<Entity>, Serializable{
+    private static final int MAX_SPELLS = 5;
     private String name;
 
     private HashMap<EntityStats, Integer> stats;
     private HashMap<BattleActions, BattleAction> battleActions;
     
     private LinkedList<Effect> onHitEffects;
-    private LinkedList<Effect> effects;
+    private HashMap<Effects, EffectInfo> effects;
     private LinkedList<Spell> spells;
 
     private EntityService entityService;
     private EntityInventory inventory;
 
-    public Entity(EntityService characterService){
+    protected Entity(EntityService characterService){
         this.entityService = characterService;
         this.onHitEffects = new LinkedList<>();
-        this.effects = new LinkedList<>();
+        this.effects = new HashMap<>();
         this.stats = new HashMap<>();
         this.spells = new LinkedList<>();
         this.battleActions = new HashMap<>();
@@ -44,7 +49,7 @@ public abstract class Entity implements Comparable<Entity>{
         inventory = new EntityInventory();
     }
 
-    public Entity(EntityService characterService, SpecialAttack spA){
+    protected Entity(EntityService characterService, SpecialAttack spA){
         this(characterService);
         this.battleActions.put(BattleActions.SPECIAL, spA);
     }
@@ -75,6 +80,12 @@ public abstract class Entity implements Comparable<Entity>{
         }
     }
 
+    public void takeDamage(int amount, boolean physical){
+        int damage = Math.min(-(amount - (physical ? this.getStat(EntityStats.PHYSDEFENCE): this.getStat(EntityStats.MAGICDEFENCE))), -1);
+        BattleLogger.getInstance().info(String.format("%s takes %d %s damage", this.name, damage, physical ? "physical" : "magic"));
+        this.updateHealth(damage);
+    }
+
     /**
      * Sets the entity's stat to a specific amount
      * @param stat stat to be updated
@@ -86,9 +97,9 @@ public abstract class Entity implements Comparable<Entity>{
 
     public int getStat(EntityStats stat){ return stats.get(stat); }
 
-    private void updateHealth(int amount){ this.stats.put(EntityStats.HEALTH, Math.min(Math.max(this.stats.get(EntityStats.HEALTH) + amount, 0), this.stats.get(EntityStats.MAXHEALTH))); }
+    private void updateHealth(int amount){ this.stats.put(EntityStats.HEALTH, Math.clamp(this.stats.get(EntityStats.HEALTH) + amount, 0, this.stats.get(EntityStats.MAXHEALTH))); }
 
-    private void updateMana(int amount){ this.stats.put(EntityStats.MANA, Math.min(Math.max(this.stats.get(EntityStats.MANA) + amount, 0), this.stats.get(EntityStats.MAXMANA))); }
+    private void updateMana(int amount){ this.stats.put(EntityStats.MANA, Math.clamp(this.stats.get(EntityStats.MANA) + amount, 0, this.stats.get(EntityStats.MAXMANA))); }
 
     private void updateMaxHealth(int amount){ this.stats.put(EntityStats.MAXHEALTH, this.stats.get(EntityStats.MAXHEALTH) + amount); this.updateHealth(amount); }
 
@@ -110,17 +121,22 @@ public abstract class Entity implements Comparable<Entity>{
         return false;
     }
 
-    public LinkedList<Effect> getEffects() { return new LinkedList<>(effects); }
+    /**
+     * Returns a Map representing each unique effect on the target with their associated info, like duration, number of stacks
+     * and the effect instance itself
+     * @return
+     */
+    public Map<Effects, EffectInfo> getEffects() { return new HashMap<>(effects); }
 
-    public void addEffect(Effect effect) { effects.add(effect); }
+    public void addEffect(Effect effect) { effects.put(effect.getType(), new EffectInfo(effect)); }
 
-    public void removeEffect(Effect effect) { effects.remove(effect); }
+    public void removeEffect(Effect effect) { effects.remove(effect.getType()); }
 
     public EntityService getEntityService() { return entityService; }
 
     public void setName(String name){ this.name = name; }
 
-    public LinkedList<Spell> getSpells(){ return new LinkedList<>(this.spells); }
+    public List<Spell> getSpells(){ return new LinkedList<>(this.spells); }
 
     /**
      * Adds a spell to the entity's spell list as long as its size does not exceed MAX_SPELLS value
@@ -140,9 +156,13 @@ public abstract class Entity implements Comparable<Entity>{
      * @param ba BattleActions object of the action we want to know the targeting of
      * @return TargetTypes object representing the targeting type of the action
      */
-    public TargetTypes getActionTargets(BattleActions ba){ return this.battleActions.get(ba).equals(null) ? null : this.battleActions.get(ba).getTargets(); }
+    public TargetTypes getActionTargets(BattleActions ba){ return this.battleActions.get(ba) == null ? null : this.battleActions.get(ba).getTargets(); }
 
     public EntityInventory getInventory(){ return this.inventory; }
+
+    public SpecialAttack getSpecial(){ return (SpecialAttack)this.battleActions.get(BattleActions.SPECIAL); }
+
+    public boolean isAlive(){ return this.getStat(EntityStats.HEALTH) > 0; }
 
     @Override
     public int compareTo(Entity e){
@@ -153,4 +173,11 @@ public abstract class Entity implements Comparable<Entity>{
     public String toString(){
         return this.name;
     }
+
+    /* @Override
+    public boolean equals(Object o){
+        if(!(o instanceof Entity)) return false;
+        Entity o1 = (Entity)o;
+        return this.getStat(EntityStats.SPEED) == o1.getStat(EntityStats.SPEED);
+    } */
 }

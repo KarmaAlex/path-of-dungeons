@@ -20,6 +20,6 @@ public class Fireball extends Spell{
     @Override
     public void applySpell(Entity source, Entity target) throws MissingTargetException{
         super.applySpell(source, target);
-        if(new Random().nextInt(100) < BURN_CHANCE) super.applySpellEffect(target);
+        if(new Random().nextInt(100) < BURN_CHANCE) super.applySpellEffect(source, target);
     }
 }

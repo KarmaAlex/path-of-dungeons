@@ -1,7 +1,7 @@
 package it.univaq.pathofdungeons.game.impl;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Random;
 
 import it.univaq.pathofdungeons.domain.dungeon.Dungeon;
@@ -9,12 +9,14 @@ import it.univaq.pathofdungeons.domain.dungeon.DungeonCoords;
 import it.univaq.pathofdungeons.domain.dungeon.DungeonDirections;
 import it.univaq.pathofdungeons.domain.dungeon.DungeonGrid;
 import it.univaq.pathofdungeons.domain.dungeon.rooms.BasicRoom;
+import it.univaq.pathofdungeons.domain.dungeon.rooms.BossRoom;
 import it.univaq.pathofdungeons.domain.dungeon.rooms.CombatRoom;
 import it.univaq.pathofdungeons.domain.dungeon.rooms.GenRooms;
 import it.univaq.pathofdungeons.domain.dungeon.rooms.NPCRoom;
 import it.univaq.pathofdungeons.domain.dungeon.rooms.Room;
 import it.univaq.pathofdungeons.domain.dungeon.rooms.SecretRoom;
 import it.univaq.pathofdungeons.domain.dungeon.rooms.Shop;
+import it.univaq.pathofdungeons.utils.FileLogger;
 
 /**
  * Utility class that contains the logic for generating the dungeon map.
@@ -41,6 +43,7 @@ public class DungeonGenerator{
         int numRooms = 1;
         Random rand = new Random();
         DungeonCoords currentCoords = new DungeonCoords(0,0);
+        DungeonCoords lastAddedCoords = null;
 
         grid.add(currentCoords, currentRoom);
         //Used for traversing dungeon rooms breadth-first
@@ -50,7 +53,7 @@ public class DungeonGenerator{
         while(numRooms < size){
             int numAdj = 0;
             currentRoom = grid.get(currentCoords);
-            ArrayList<Room> adjacent = currentRoom.getAdjacent();
+            List<Room> adjacent = currentRoom.getAdjacent();
             for(DungeonDirections dir: DungeonDirections.values()){
                 int oldWidth = grid.getWidth();
                 int oldHeight = grid.getHeight();
@@ -62,6 +65,8 @@ public class DungeonGenerator{
                             currentRoom.setRoom(dir, tempRoom);
                             tempRoom.setRoom(DungeonDirections.fromIndex(dir.getOpposite()), currentRoom);
                             grid.add(dir, tempRoom, currentCoords);
+                            // record coords of the room we just added
+                            lastAddedCoords = DungeonCoords.move(currentCoords, dir);
                             // If adding rooms left or above and array is shifted the room coords need to be updated
                             if((dir == DungeonDirections.LEFT && oldWidth != grid.getWidth()) || (dir == DungeonDirections.UP && oldHeight != grid.getHeight())){
                                 currentCoords = DungeonCoords.move(currentCoords, DungeonDirections.fromIndex(dir.getOpposite()));
@@ -92,20 +97,24 @@ public class DungeonGenerator{
                 if (numRooms >= size) break;
             }
             if(numAdj < 4){
-                if(toCheck.size() > 0){
+                if(!toCheck.isEmpty()){
                     backup.add(currentCoords);
                     currentCoords = toCheck.removeFirst();
-                } else if(backup.size() > 0){
+                } else if(!backup.isEmpty()){
                     backup.add(currentCoords);
                     currentCoords = backup.removeFirst();
                 }
             }
-            else if(toCheck.size() > 0) currentCoords = toCheck.removeFirst();
-            else if(backup.size() > 0) currentCoords = backup.removeFirst();
+            else if(!toCheck.isEmpty()) currentCoords = toCheck.removeFirst();
+            else if(!backup.isEmpty()) currentCoords = backup.removeFirst();
         }
-        //TODO: Make the last added room the boss room
+        //Make the last room added a boss room
+        if(lastAddedCoords != null){
+            addBoss(grid, lastAddedCoords);
+        }
         Dungeon dungeon = new Dungeon(startingRoom, grid);
         dungeon.setService(new DungeonServiceImpl());
+        FileLogger.getInstance().info("Created dungeon");
         return dungeon;
     }
 
@@ -139,5 +148,25 @@ public class DungeonGenerator{
             }
         }
         return null;
+    }
+
+    /**
+     * Replace the room at the given coords with a BossRoom while preserving connections to adjacent rooms
+     * @param grid reference grid
+     * @param coords coordinates of the last room that was added
+     */
+    private static void addBoss(DungeonGrid grid, DungeonCoords coords){
+        Room old = grid.get(coords);
+        if(old == null) return;
+        BossRoom boss = new BossRoom();
+        for(DungeonDirections dir: DungeonDirections.values()){
+            Room adj = old.getRoom(dir);
+            if(adj != null){
+                boss.setRoom(dir, adj);
+                adj.setRoom(DungeonDirections.fromIndex(dir.getOpposite()), boss);
+            }
+        }
+        grid.add(coords, boss);
+        FileLogger.getInstance().info("Added boss room at " + coords);
     }
 }

@@ -1,8 +1,10 @@
 package it.univaq.pathofdungeons.game;
 
+import java.util.List;
+
 import it.univaq.pathofdungeons.domain.Battle;
 import it.univaq.pathofdungeons.domain.entity.Entity;
-import it.univaq.pathofdungeons.domain.items.Item;
+import it.univaq.pathofdungeons.domain.items.ItemSlot;
 import it.univaq.pathofdungeons.domain.spells.Spell;
 
 public interface BattleService {
@@ -11,7 +13,7 @@ public interface BattleService {
      * @param target target of the attack
      * @throws MissingTargetException if target is null
      */
-    void attack(Entity target) throws MissingTargetException;
+    void attack(Entity source, Entity target) throws MissingTargetException;
     /**
      * Handles an entity defending itself
      */
@@ -21,12 +23,14 @@ public interface BattleService {
      * @param target target of the ability
      * @throws MissingTargetException if target is required and null
      */
-    void special(Entity target) throws MissingTargetException;
+    void special(Entity source, Entity target) throws MissingTargetException;
+
+    void special(Entity source, List<Entity> targets) throws MissingTargetException;
     /**
      * Handles the use of an item by the current turn holder
      * @param item item to be used
      */
-    void item(Item item);
+    void item(Entity source, ItemSlot item);
     /**
      * Handles the usage of spells against a target
      * @param target target of the spell
@@ -34,7 +38,7 @@ public interface BattleService {
      * @throws MissingTargetException if the spell requires a target and none is passed
      * @throws MissingManaException if the user of the spell lacks the mana to use it
      */
-    void spell(Entity target, Spell spell) throws MissingTargetException, MissingManaException;
+    void spell(Spell spell, Entity source, Entity target) throws MissingTargetException, MissingManaException;
     /**
      * Handles turn start logic.
      * @return true if turn start is successful and an action is selected, false otherwise
@@ -46,7 +50,6 @@ public interface BattleService {
     void turnEnd();
     void battleEnd();
     boolean isPlayerWin();
-    int diceRoll(int faces);
     Battle getBattle();
     Entity getTurnHolder();
 }

@@ -1,14 +1,24 @@
 {
     "helmet":{
         "base": {
-            "name": "Hunter hood",
+            "name": "Warrior's helmet",
             "slot": "HELMET"
         },
-        "effect":"BURN",
         "rarity":"COMMON",
         "stats":{
-            "CRITCHANCE":1,
-            "MAXHEALTH":15
+            "MAXHEALTH":15,
+            "PHYSDEFENCE": 1
+        }
+    },
+    "chestplate":{
+        "base": {
+            "name": "Iron chestplate",
+            "slot": "CHESTPLATE"
+        },
+        "rarity": "COMMON",
+        "stats": {
+            "MAXHEALTH": 15,
+            "PHYSDEFENCE": 5
         }
     }
 }

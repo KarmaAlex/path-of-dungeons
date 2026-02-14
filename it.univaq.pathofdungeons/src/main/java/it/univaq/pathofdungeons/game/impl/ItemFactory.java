@@ -3,9 +3,12 @@ package it.univaq.pathofdungeons.game.impl;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
@@ -17,8 +20,12 @@ import it.univaq.pathofdungeons.domain.effects.Effects;
 import it.univaq.pathofdungeons.domain.entity.EntityStats;
 import it.univaq.pathofdungeons.domain.entity.enemies.Enemy;
 import it.univaq.pathofdungeons.domain.entity.player.PlayerClasses;
+import it.univaq.pathofdungeons.domain.items.Consumable;
 import it.univaq.pathofdungeons.domain.items.EquipSlots;
 import it.univaq.pathofdungeons.domain.items.EquippableStatInfo;
+import it.univaq.pathofdungeons.domain.items.Item;
+import it.univaq.pathofdungeons.domain.items.consumables.HealthPotion;
+import it.univaq.pathofdungeons.domain.items.consumables.ManaPotion;
 import it.univaq.pathofdungeons.domain.items.equippable.BaseItem;
 import it.univaq.pathofdungeons.domain.items.equippable.Belt;
 import it.univaq.pathofdungeons.domain.items.equippable.Boots;
@@ -30,14 +37,19 @@ import it.univaq.pathofdungeons.domain.items.equippable.Rarities;
 import it.univaq.pathofdungeons.domain.items.equippable.Ring;
 import it.univaq.pathofdungeons.domain.items.equippable.Weapon;
 import it.univaq.pathofdungeons.domain.spells.Spells;
+import it.univaq.pathofdungeons.utils.FileLogger;
 
-public class EquippableFactory {
+public class ItemFactory {
     private static final String LOADOUTS_BASE = "config/loadouts/";
     private static final String LOADOUTS_EXT = ".json";
     private static final String BASES_BASE = "config/item_bases/";
     private static final String[] BASES_PATHS = new String[] {"belts", "boots", "chestpieces", "gloves", "helmets", "rings", "weapons"};
     private static final HashMap<EquipSlots, ArrayList<BaseItem>> basesMap;
-    private static final int DROP_GENERATION_CHANCE = 30;
+    private static final int EQUIPPABLE_GENERATION_CHANCE = 30;
+    private static final int POTION_GENERATION_CHANCE = 100;
+    private static final int POTION_STACK_COST = 20;
+    private static final int MAX_SHOP_ITEMS = 3;
+    private static final int EQUIP_BASE_PRICE = 400;
 
     static {
         basesMap = new HashMap<>();
@@ -52,11 +64,19 @@ public class EquippableFactory {
             }
             
         } catch(IOException e){
-            e.printStackTrace();
+            FileLogger.getInstance().error(e.getMessage());
         }
     }
 
-    public static Equippable getRandomItem(){
+    private ItemFactory(){}
+
+    /**
+     * Returns a random equippable item. Item generation happens in phases, first a random base item from the predefined list is chose, 
+     * then a rarity which determines the amount of stats it can have, 
+     * then the stats are chosen randomly. Finally if the rarity is epic a random effect is chosen and if legendary a random spell is chosen.
+     * @return a randomly generated equippable item
+     */
+    public static Equippable getRandomEquippable(){
         Random rand = new Random();
         EquipSlots slot = EquipSlots.values()[rand.nextInt(EquipSlots.values().length)];
         BaseItem base = basesMap.get(slot).get(rand.nextInt(basesMap.get(slot).size()));
@@ -70,7 +90,7 @@ public class EquippableFactory {
             }
         }
         HashMap<EntityStats, Integer> stats = new HashMap<>();
-        HashMap<EntityStats, EquippableStatInfo> slotStats = slot.getStatWeights();
+        Map<EntityStats, EquippableStatInfo> slotStats = slot.getStatWeights();
         Set<EntityStats> keys = new HashSet<>(slotStats.keySet());
         int range = 100;
         for(int i = 0; i < rarity.getNumStats(); i++){
@@ -119,25 +139,56 @@ public class EquippableFactory {
         }    
     }
 
+    /**
+     * Loads a player loadout from the ones defined in the properties folder and returns it
+     * @param pclass character class of the loadout to be loaded
+     * @return the loaded loadout
+     */
     public static Loadout getPlayerLoadout(PlayerClasses pclass){
         // Reminder that JSON.parseObject will call constructors with default values if an entry is present but no value is assigned
         try(InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(LOADOUTS_BASE + pclass.toString().toLowerCase() + LOADOUTS_EXT)){
-            Loadout loadout = JSON.parseObject(is.readAllBytes(), Loadout.class);
-            return loadout;
-            //return new EntityInventory(loadout);
+            return JSON.parseObject(is.readAllBytes(), Loadout.class);
         } catch(IOException e){
-            e.printStackTrace();
+            FileLogger.getInstance().error(e.getMessage());
         }
         return null;
     }
 
-    public static LinkedList<Equippable> generateDrops(LinkedList<Enemy> enemies){
-        //TODO: improve implementation
-        LinkedList<Equippable> drops = new LinkedList<>();
+    public static Consumable getRandomPotionStack(){
+        Random rand = new Random();
+        if(rand.nextInt(100) < 50){
+            return new HealthPotion(rand.nextInt(5)+1);
+        }
+        return new ManaPotion(rand.nextInt(5)+1);
+    }
+
+    /**
+     * Has a chance to generate a random equippable item based on the amount of enemies in the room. Each enemy has the same generation chance.
+     * This method should be called after a battle room is completed using the initial enemies inside it.
+     * @param enemies list of enemies in the room that was just completed
+     * @return a possibly empty list of generated items
+     */
+    public static Collection<Item> getLootDrops(List<Enemy> enemies){
+        LinkedList<Item> drops = new LinkedList<>();
         Random rand = new Random();
         for(int i = 0; i < enemies.size(); i++){
-            if(rand.nextInt(100) < DROP_GENERATION_CHANCE) drops.add(EquippableFactory.getRandomItem());
+            int r = rand.nextInt(100); 
+            if(r < EQUIPPABLE_GENERATION_CHANCE) drops.add(ItemFactory.getRandomEquippable());
+            if(r < POTION_GENERATION_CHANCE) drops.add(ItemFactory.getRandomPotionStack());
         }
         return drops;
+    }
+
+    public static Map<Item, Integer> getShopItems(){
+        HashMap<Item, Integer> items = new HashMap<>();
+        Consumable potion = ItemFactory.getRandomPotionStack();
+        items.put(potion, potion.getAmount() * POTION_STACK_COST);
+        int numItems = new Random().nextInt(MAX_SHOP_ITEMS) + 1;
+        for(int i = 0; i < numItems; i++){
+            Equippable equip = ItemFactory.getRandomEquippable();
+            int price = (int)(EQUIP_BASE_PRICE * equip.getRarity().getStatMult());
+            items.put(equip, price);
+        }
+        return items;
     }
 }

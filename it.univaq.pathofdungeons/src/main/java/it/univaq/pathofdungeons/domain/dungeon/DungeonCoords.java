@@ -36,7 +36,11 @@ public class DungeonCoords {
     public boolean equals(Object o){
         if(!(o instanceof DungeonCoords)) return false;
         DungeonCoords dc = (DungeonCoords) o;
-        if(this.x == dc.x && this.y == dc.y) return true;
-        return false;
+        return this.x == dc.x && this.y == dc.y;
+    }
+
+    @Override
+    public String toString(){
+        return String.format("(%d, %d)", this.x, this.y);
     }
 }

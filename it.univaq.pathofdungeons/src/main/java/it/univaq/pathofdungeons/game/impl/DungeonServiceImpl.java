@@ -1,11 +1,14 @@
 package it.univaq.pathofdungeons.game.impl;
 
+import java.util.List;
+
 import it.univaq.pathofdungeons.domain.dungeon.Dungeon;
 import it.univaq.pathofdungeons.domain.dungeon.DungeonCoords;
 import it.univaq.pathofdungeons.domain.dungeon.DungeonDirections;
 import it.univaq.pathofdungeons.domain.dungeon.DungeonGrid;
 import it.univaq.pathofdungeons.domain.dungeon.rooms.Room;
 import it.univaq.pathofdungeons.domain.dungeon.rooms.RoomTypes;
+import it.univaq.pathofdungeons.domain.entity.player.Player;
 import it.univaq.pathofdungeons.game.DungeonService;
 
 public class DungeonServiceImpl implements DungeonService{
@@ -72,8 +75,7 @@ public class DungeonServiceImpl implements DungeonService{
     }
 
     @Override
-    public void interact(Room currentRoom){
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'interact'");
+    public void interact(List<Player> players){
+        this.dungeon.getCurrentRoom().onInteract(players);
     }
 }

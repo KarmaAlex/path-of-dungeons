@@ -1,12 +1,15 @@
 package it.univaq.pathofdungeons.domain.entity.enemies;
 
+import it.univaq.pathofdungeons.utils.StringUtils;
+
 public enum EnemyTypes {
     ZOMBIE(30),
     SKELETON(15),
     SPIDER(20),
     SLIME(20),
     MAGMASLIME(10),
-    GOLEM(5);
+    GOLEM(5),
+    BOSS(0);
 
     private int weight;
 
@@ -18,6 +21,6 @@ public enum EnemyTypes {
 
     @Override
     public String toString(){
-        return this.name().substring(0, 1).toUpperCase() + this.name().substring(1).toLowerCase();
+        return StringUtils.capitalize(this.name());
     }
 }

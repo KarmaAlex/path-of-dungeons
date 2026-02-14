@@ -7,139 +7,266 @@
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1280.0" stylesheets="@inventoryView.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.univaq.pathofdungeons.controller.InventoryViewController">
+<Pane fx:id="root" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.univaq.pathofdungeons.controller.InventoryViewController">
    <children>
-      <HBox prefHeight="400.0" prefWidth="200.0">
+      <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1280.0" stylesheets="@inventoryView.css">
          <children>
-            <VBox prefHeight="200.0" prefWidth="490.0">
+            <HBox prefHeight="400.0" prefWidth="200.0">
                <children>
-                  <Button fx:id="backBtn" mnemonicParsing="false" text="Back">
-                     <VBox.margin>
-                        <Insets left="10.0" top="10.0" />
-                     </VBox.margin>
-                  </Button>
+                  <VBox prefHeight="200.0" prefWidth="490.0">
+                     <children>
+                        <Button fx:id="backBtn" mnemonicParsing="false" text="Back">
+                           <VBox.margin>
+                              <Insets left="10.0" top="10.0" />
+                           </VBox.margin>
+                        </Button>
+                     </children>
+                  </VBox>
+                  <GridPane>
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <children>
+                        <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
+                           <children>
+                              <StackPane fx:id="weaponSlot" prefHeight="100.0" prefWidth="100.0">
+                                 <children>
+                                    <Label alignment="CENTER" styleClass="unequipped" text="Weapon" />
+                                 </children>
+                              </StackPane>
+                           </children>
+                           <styleClass>
+                              <String fx:value="border" />
+                              <String fx:value="border-tl" />
+                           </styleClass>
+                        </VBox>
+                        <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+                           <children>
+                              <StackPane fx:id="helmetSlot" prefHeight="100.0" prefWidth="100.0">
+                                 <children>
+                                    <Label alignment="CENTER" contentDisplay="CENTER" styleClass="unequipped" text="Helmet" />
+                                 </children>
+                              </StackPane>
+                           </children>
+                           <styleClass>
+                              <String fx:value="border" />
+                              <String fx:value="border-tlr" />
+                           </styleClass>
+                        </VBox>
+                        <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                           <children>
+                              <StackPane fx:id="rightringSlot" prefHeight="100.0" prefWidth="100.0">
+                                 <children>
+                                    <Label styleClass="unequipped" text="Right ring" />
+                                 </children>
+                              </StackPane>
+                           </children>
+                           <styleClass>
+                              <String fx:value="border" />
+                              <String fx:value="border-brt" />
+                           </styleClass>
+                        </VBox>
+                        <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                           <children>
+                              <StackPane fx:id="chestpieceSlot" prefHeight="100.0" prefWidth="100.0">
+                                 <children>
+                                    <Label styleClass="unequipped" text="Chestpiece" />
+                                 </children>
+                              </StackPane>
+                           </children>
+                           <styleClass>
+                              <String fx:value="border" />
+                              <String fx:value="border-all" />
+                           </styleClass>
+                        </VBox>
+                        <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.rowIndex="1">
+                           <children>
+                              <StackPane fx:id="leftringSlot" prefHeight="100.0" prefWidth="100.0">
+                                 <children>
+                                    <Label styleClass="unequipped" text="Left ring" />
+                                 </children>
+                              </StackPane>
+                           </children>
+                           <styleClass>
+                              <String fx:value="border" />
+                              <String fx:value="border-tlb" />
+                           </styleClass>
+                        </VBox>
+                        <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.rowIndex="2">
+                           <children>
+                              <StackPane fx:id="glovesSlot" prefHeight="100.0" prefWidth="100.0">
+                                 <children>
+                                    <Label styleClass="unequipped" text="Gloves" />
+                                 </children>
+                              </StackPane>
+                           </children>
+                           <styleClass>
+                              <String fx:value="border" />
+                              <String fx:value="border-bl" />
+                           </styleClass>
+                        </VBox>
+                        <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                           <children>
+                              <StackPane fx:id="beltSlot" prefHeight="100.0" prefWidth="100.0">
+                                 <children>
+                                    <Label styleClass="unequipped" text="Belt" />
+                                 </children>
+                              </StackPane>
+                           </children>
+                           <styleClass>
+                              <String fx:value="border" />
+                              <String fx:value="border-brl" />
+                           </styleClass>
+                        </VBox>
+                        <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                           <children>
+                              <StackPane fx:id="bootsSlot" prefHeight="100.0" prefWidth="100.0">
+                                 <children>
+                                    <Label alignment="CENTER" contentDisplay="CENTER" styleClass="unequipped" text="Boots" />
+                                 </children>
+                              </StackPane>
+                           </children>
+                           <styleClass>
+                              <String fx:value="border" />
+                              <String fx:value="border-brl" />
+                           </styleClass>
+                        </VBox>
+                     </children>
+                  </GridPane>
+                  <VBox fx:id="statsPane" alignment="CENTER" prefHeight="200.0" prefWidth="490.0" styleClass="border-with-top" />
                </children>
-            </VBox>
-            <GridPane>
-              <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-              </columnConstraints>
-              <rowConstraints>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-              </rowConstraints>
+            </HBox>
+            <HBox prefHeight="400.0" prefWidth="200.0">
                <children>
-                  <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
+                  <VBox alignment="CENTER" prefHeight="200.0" prefWidth="390.0">
                      <children>
-                        <Label fx:id="weaponSlot" alignment="CENTER" styleClass="unequipped" text="Weapon" />
+                        <Label fx:id="gold" text="Label">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Label>
                      </children>
-                     <styleClass>
-                        <String fx:value="border" />
-                        <String fx:value="border-tl" />
-                     </styleClass>
                   </VBox>
-                  <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1">
+                  <GridPane fx:id="inventoryGrid" gridLinesVisible="true">
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
                      <children>
-                        <Label fx:id="helmetSlot" styleClass="unequipped" text="Helmet" />
+                        <StackPane maxHeight="140.0" maxWidth="100.0" minHeight="140.0" minWidth="100.0" prefHeight="140.0" prefWidth="100.0" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+                           <children>
+                              <Label />
+                           </children>
+                        </StackPane>
+                        <StackPane maxHeight="140.0" maxWidth="100.0" minHeight="140.0" minWidth="100.0" prefHeight="140.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+                           <children>
+                              <Label />
+                           </children>
+                        </StackPane>
+                        <StackPane maxHeight="140.0" maxWidth="100.0" minHeight="140.0" minWidth="100.0" prefHeight="140.0" prefWidth="100.0" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+                           <children>
+                              <Label />
+                           </children>
+                        </StackPane>
+                        <StackPane layoutX="210.0" layoutY="10.0" maxHeight="140.0" maxWidth="100.0" minHeight="140.0" minWidth="100.0" prefHeight="140.0" prefWidth="100.0" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+                           <children>
+                              <Label />
+                           </children>
+                        </StackPane>
+                        <StackPane layoutX="10.0" layoutY="10.0" maxHeight="140.0" maxWidth="100.0" minHeight="140.0" minWidth="100.0" prefHeight="140.0" prefWidth="100.0" GridPane.columnIndex="4" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+                           <children>
+                              <Label />
+                           </children>
+                        </StackPane>
+                        <StackPane layoutX="10.0" layoutY="10.0" maxHeight="140.0" maxWidth="100.0" minHeight="140.0" minWidth="100.0" prefHeight="140.0" prefWidth="100.0" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+                           <children>
+                              <Label />
+                           </children>
+                        </StackPane>
+                        <StackPane layoutX="10.0" layoutY="144.0" maxHeight="140.0" maxWidth="100.0" minHeight="140.0" minWidth="100.0" prefHeight="140.0" prefWidth="100.0" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+                           <children>
+                              <Label />
+                           </children>
+                        </StackPane>
+                        <StackPane layoutX="10.0" layoutY="10.0" maxHeight="140.0" maxWidth="100.0" minHeight="140.0" minWidth="100.0" prefHeight="140.0" prefWidth="100.0" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+                           <children>
+                              <Label />
+                           </children>
+                        </StackPane>
+                        <StackPane layoutX="10.0" layoutY="10.0" maxHeight="140.0" maxWidth="100.0" minHeight="140.0" minWidth="100.0" prefHeight="140.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+                           <children>
+                              <Label />
+                           </children>
+                        </StackPane>
+                        <StackPane layoutX="310.0" layoutY="144.0" maxHeight="140.0" maxWidth="100.0" minHeight="140.0" minWidth="100.0" prefHeight="140.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+                           <children>
+                              <Label />
+                           </children>
+                        </StackPane>
+                        <StackPane layoutX="10.0" layoutY="10.0" maxHeight="140.0" maxWidth="100.0" minHeight="140.0" minWidth="100.0" prefHeight="140.0" prefWidth="100.0" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+                           <children>
+                              <Label />
+                           </children>
+                        </StackPane>
+                        <StackPane layoutX="10.0" layoutY="10.0" maxHeight="140.0" maxWidth="100.0" minHeight="140.0" minWidth="100.0" prefHeight="140.0" prefWidth="100.0" GridPane.columnIndex="4" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+                           <children>
+                              <Label />
+                           </children>
+                        </StackPane>
+                        <StackPane layoutX="110.0" layoutY="277.0" maxHeight="140.0" maxWidth="100.0" minHeight="140.0" minWidth="100.0" prefHeight="140.0" prefWidth="100.0" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+                           <children>
+                              <Label />
+                           </children>
+                        </StackPane>
+                        <StackPane layoutX="10.0" layoutY="10.0" maxHeight="140.0" maxWidth="100.0" minHeight="140.0" minWidth="100.0" prefHeight="140.0" prefWidth="100.0" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+                           <children>
+                              <Label />
+                           </children>
+                        </StackPane>
+                        <StackPane layoutX="10.0" layoutY="10.0" maxHeight="140.0" maxWidth="100.0" minHeight="140.0" minWidth="100.0" prefHeight="140.0" prefWidth="100.0" GridPane.columnIndex="4" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+                           <children>
+                              <Label />
+                           </children>
+                        </StackPane>
                      </children>
-                     <styleClass>
-                        <String fx:value="border" />
-                        <String fx:value="border-tlr" />
-                     </styleClass>
-                  </VBox>
-                  <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                  </GridPane>
+                  <VBox alignment="CENTER" prefHeight="200.0" prefWidth="390.0">
                      <children>
-                        <Label fx:id="rightringSlot" styleClass="unequipped" text="Right ring" />
-                     </children>
-                     <styleClass>
-                        <String fx:value="border" />
-                        <String fx:value="border-brt" />
-                     </styleClass>
-                  </VBox>
-                  <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                     <children>
-                        <Label fx:id="chestpieceSlot" styleClass="unequipped" text="Chestpiece" />
-                     </children>
-                     <styleClass>
-                        <String fx:value="border" />
-                        <String fx:value="border-all" />
-                     </styleClass>
-                  </VBox>
-                  <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.rowIndex="1">
-                     <children>
-                        <Label fx:id="leftringSlot" styleClass="unequipped" text="Left ring" />
-                     </children>
-                     <styleClass>
-                        <String fx:value="border" />
-                        <String fx:value="border-tlb" />
-                     </styleClass>
-                  </VBox>
-                  <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.rowIndex="2">
-                     <children>
-                        <Label fx:id="glovesSlot" styleClass="unequipped" text="Gloves" />
-                     </children>
-                     <styleClass>
-                        <String fx:value="border" />
-                        <String fx:value="border-bl" />
-                     </styleClass>
-                  </VBox>
-                  <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                     <children>
-                        <Label fx:id="beltSlot" style="-fx-opacity: 0.4;" styleClass="unequipped" text="Belt" />
-                     </children>
-                     <styleClass>
-                        <String fx:value="border" />
-                        <String fx:value="border-brl" />
-                     </styleClass>
-                  </VBox>
-                  <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
-                     <children>
-                        <Label fx:id="bootsSlot" styleClass="unequipped" text="Boots" />
-                     </children>
-                     <styleClass>
-                        <String fx:value="border" />
-                        <String fx:value="border-brl" />
-                     </styleClass>
-                  </VBox>
+                        <StackPane fx:id="trashSlot" maxHeight="140.0" maxWidth="100.0" minHeight="140.0" minWidth="100.0" prefHeight="140.0" prefWidth="100.0">
+                           <children>
+                              <Label text="Trash slot" />
+                           </children>
+                           <styleClass>
+                              <String fx:value="border-all" />
+                              <String fx:value="border" />
+                           </styleClass>
+                        </StackPane>
+                     </children></VBox>
                </children>
-            </GridPane>
-            <VBox fx:id="statsPane" alignment="CENTER" prefHeight="200.0" prefWidth="490.0" styleClass="border-with-top" />
+            </HBox>
          </children>
-      </HBox>
-      <HBox prefHeight="400.0" prefWidth="200.0">
-         <children>
-            <VBox alignment="CENTER" prefHeight="200.0" prefWidth="390.0">
-               <children>
-                  <Label fx:id="gold" text="Label">
-                     <font>
-                        <Font size="18.0" />
-                     </font>
-                  </Label>
-               </children></VBox>
-            <GridPane fx:id="inventoryGrid" gridLinesVisible="true">
-              <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-              </columnConstraints>
-              <rowConstraints>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-              </rowConstraints>
-            </GridPane>
-            <VBox prefHeight="200.0" prefWidth="390.0" />
-         </children>
-      </HBox>
+      </VBox>
    </children>
-</VBox>
+</Pane>

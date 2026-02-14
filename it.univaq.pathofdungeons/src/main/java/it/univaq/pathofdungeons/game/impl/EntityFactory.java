@@ -11,8 +11,14 @@ import it.univaq.pathofdungeons.domain.entity.enemies.Enemy;
 import it.univaq.pathofdungeons.domain.entity.enemies.EnemyTypes;
 import it.univaq.pathofdungeons.domain.entity.player.Player;
 import it.univaq.pathofdungeons.domain.entity.player.PlayerClasses;
+import it.univaq.pathofdungeons.domain.specials.ArcherSpecial;
+import it.univaq.pathofdungeons.domain.specials.MageSpecial;
+import it.univaq.pathofdungeons.domain.specials.PaladinSpecial;
+import it.univaq.pathofdungeons.domain.specials.SpecialAttack;
+import it.univaq.pathofdungeons.domain.specials.WarriorSpecial;
 import it.univaq.pathofdungeons.domain.spells.Spells;
 import it.univaq.pathofdungeons.game.EntityStatsNotFoundException;
+import it.univaq.pathofdungeons.utils.FileLogger;
 
 /**
  * Factory that returns new instances of entitites of various types.
@@ -25,16 +31,38 @@ public class EntityFactory {
     private static final int MAX_ENEMY_GOLD = 100;
     private static final int MIN_ENEMY_GOLD = 10;
 
+    private EntityFactory(){}
+
     /**
      * Generates a new player with the given class and loads its corresponding loadout
      * @param pClass PlayerClasses object of the desired class
      * @return a new Player object with the specified class and associated stats
      * @throws EntityStatsNotFoundException in case the class has no associated stats/the file is not readable
      */
-    public static Player getPlayer(PlayerClasses pClass) throws EntityStatsNotFoundException{
-        Player player = new Player(EntityServiceFactory.getService(Player.class), pClass);
+    public static Player getPlayer(PlayerClasses pClass, String name) throws EntityStatsNotFoundException{
+        SpecialAttack spa = null;
+        switch(pClass){
+            case ARCHER:
+                spa = new ArcherSpecial();
+                break;
+            case WARRIOR:
+                spa = new WarriorSpecial();
+                break;
+            case MAGE:
+                spa = new MageSpecial();
+                break;
+            case PALADIN:
+                spa = new PaladinSpecial();
+                break;
+            default:
+                break;
+        }
+        Player player = null;
+        if(spa != null) player = new Player(EntityServiceFactory.getService(Player.class), pClass, spa, name);
+        else new Player(EntityServiceFactory.getService(Player.class), pClass);
         getStats(player, pClass.toString(), PLAYER_BASE);
-        InventoryServiceImpl.getInstance().loadLoadout(EquippableFactory.getPlayerLoadout(pClass), player);
+        InventoryService.loadLoadout(ItemFactory.getPlayerLoadout(pClass), player);
+        FileLogger.getInstance().info(String.format("Created player %s with class %s", name, pClass));
         return player;
     }
 
@@ -48,7 +76,7 @@ public class EntityFactory {
         Enemy enemy = new Enemy(EntityServiceFactory.getService(Enemy.class), type);
         getStats(enemy, type.toString(), ENEMY_BASE);
         //TODO: change gold given to entities based on their difficulty rating
-        enemy.getInventory().addGold(new Random().nextInt(MIN_ENEMY_GOLD, MAX_ENEMY_GOLD + 1));
+        InventoryService.addGold(enemy ,new Random().nextInt(MIN_ENEMY_GOLD, MAX_ENEMY_GOLD + 1));
         return enemy;
     }
 
@@ -73,7 +101,14 @@ public class EntityFactory {
             throw new EntityStatsNotFoundException("Errore nella generazione di un nemico casuale");
         }
         Enemy enemy = new Enemy(EntityServiceFactory.getService(Enemy.class), type);
+        InventoryService.addGold(enemy ,new Random().nextInt(MIN_ENEMY_GOLD, MAX_ENEMY_GOLD + 1));
         getStats(enemy, type.toString(), ENEMY_BASE);
+        return enemy;
+    }
+
+    public static Enemy getBoss() throws EntityStatsNotFoundException{
+        Enemy enemy = new Enemy(EntityServiceFactory.getService(Enemy.class), EnemyTypes.BOSS);
+        getStats(enemy, EnemyTypes.BOSS.toString(), ENEMY_BASE);
         return enemy;
     }
 
@@ -89,16 +124,22 @@ public class EntityFactory {
         try(InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream(base + type.toLowerCase() + EXT)){
             prop.load(stream);
             for(EntityStats stat: EntityStats.values()){
-                if(stat == EntityStats.HEALTH) ent.setStat(EntityStats.HEALTH, ent.getStat(EntityStats.MAXHEALTH));
-                else if(stat == EntityStats.MANA) ent.setStat(EntityStats.MANA, ent.getStat(EntityStats.MAXMANA));
-                else ent.setStat(stat, Integer.parseInt(prop.getProperty(stat.name().toLowerCase())));
+                switch(stat){
+                    case HEALTH:
+                        ent.setStat(EntityStats.HEALTH, ent.getStat(EntityStats.MAXHEALTH));
+                        break;
+                    case MANA:
+                        ent.setStat(EntityStats.MANA, ent.getStat(EntityStats.MAXMANA));
+                        break;
+                    default:
+                        ent.setStat(stat, Integer.parseInt(prop.getProperty(stat.name().toLowerCase())));
+                }
             }
             String spell = prop.getProperty(STARTING_SPELL);
             if (spell != null) ent.addSpell(SpellFactory.getSpell(Spells.valueOf(spell.toUpperCase())));
         } catch(IOException e){
             throw new EntityStatsNotFoundException("Errore nella lettura del file per l'entità " + type);
         } catch(NullPointerException e){
-            e.printStackTrace();
             throw new EntityStatsNotFoundException("Statistiche per l'entità " + type + " non trovate");
         }
     }

@@ -1,5 +1,6 @@
 package it.univaq.pathofdungeons.domain.dungeon;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import it.univaq.pathofdungeons.domain.dungeon.rooms.Room;
@@ -8,7 +9,7 @@ import it.univaq.pathofdungeons.domain.dungeon.rooms.Room;
  * Class that represents the grid representation of the map of the dungeon
  * Used primarily to check for room adjacency when deciding passages between them and for drawing the map on the interface
  */
-public class DungeonGrid {
+public class DungeonGrid implements Serializable{
 
     private ArrayList<ArrayList<Room>> grid;
 

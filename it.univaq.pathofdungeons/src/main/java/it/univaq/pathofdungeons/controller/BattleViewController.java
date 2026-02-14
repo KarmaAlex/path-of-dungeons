@@ -2,15 +2,22 @@ package it.univaq.pathofdungeons.controller;
 
 import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.List;
 
 import it.univaq.pathofdungeons.domain.Battle;
 import it.univaq.pathofdungeons.domain.BattleActions;
 import it.univaq.pathofdungeons.domain.TargetTypes;
 import it.univaq.pathofdungeons.domain.entity.Entity;
 import it.univaq.pathofdungeons.domain.entity.EntityStats;
+import it.univaq.pathofdungeons.domain.items.ItemSlot;
+import it.univaq.pathofdungeons.domain.items.Slot;
+import it.univaq.pathofdungeons.domain.items.consumables.HealthPotion;
 import it.univaq.pathofdungeons.domain.spells.Spell;
 import it.univaq.pathofdungeons.game.MissingManaException;
 import it.univaq.pathofdungeons.game.MissingTargetException;
+import it.univaq.pathofdungeons.game.impl.InventoryService;
+import it.univaq.pathofdungeons.utils.BattleLogger;
+import it.univaq.pathofdungeons.utils.FileLogger;
 import it.univaq.pathofdungeons.view.ViewDispatcher;
 import it.univaq.pathofdungeons.view.ViewException;
 import javafx.fxml.FXML;
@@ -31,61 +38,36 @@ import javafx.scene.input.KeyCode;
  */
 public class BattleViewController implements DataInitializable<Battle>{
     @FXML
-    HBox root;
+    private HBox root;
     @FXML
-    HBox playerStatus;
+    private HBox playerStatus, enemyStatus;
     @FXML
-    HBox enemyStatus;
+    private Button attackButton, spellButton, spellBtn1, spellBtn2, spellBtn3, spellBtn4, spellBtn5, defendButton,
+    specialButton, itemButton, spellBack, itemBack, itemBtn1, itemBtn2, itemBtn3, itemBtn4, itemBtn5;
     @FXML
-    Button attackButton;
+    private GridPane actionsPane, spellsPane, itemPane;
     @FXML
-    Button spellButton;
+    private TextFlow battleLog;
     @FXML
-    Button spellBtn1;
-    @FXML
-    Button spellBtn2;
-    @FXML
-    Button spellBtn3;
-    @FXML
-    Button spellBtn4;
-    @FXML
-    Button spellBtn5;
-    @FXML
-    Button defendButton;
-    @FXML
-    Button specialButton;
-    @FXML
-    Button itemButton;
-    @FXML
-    GridPane actionsPane;
-    @FXML
-    GridPane spellsPane;
-    @FXML
-    Button spellBack;
-    @FXML
-    TextFlow battleLog;
-    @FXML
-    ScrollPane scrollPane;
+    private ScrollPane scrollPane;
 
-    Battle battle;
-    LinkedList<EntityStatus> playerStatuses;
-    LinkedList<EntityStatus> enemyStatuses;
-    LinkedList<Button> actionButtons;
-    LinkedList<Button> spellButtons;
-    LinkedList<SelectableEntity> playerSelectors;
-    LinkedList<SelectableEntity> enemySelectors;
-    Entity turnHolder;
-    Entity lastTurnHolder;
+    private Battle battle;
+    private LinkedList<EntityStatus> playerStatuses, enemyStatuses;
+    private LinkedList<Button> actionButtons, spellButtons, itemButtons;
+    private LinkedList<SelectableEntity> playerSelectors, enemySelectors;
+    private Entity turnHolder, lastTurnHolder;
 
     @Override
     public void initialize(Battle data) {
         this.actionButtons = new LinkedList<>(Arrays.asList(attackButton, spellButton, defendButton, specialButton, itemButton));
         this.spellButtons = new LinkedList<>(Arrays.asList(spellBtn1, spellBtn2, spellBtn3, spellBtn4, spellBtn5));
+        this.itemButtons = new LinkedList<>(Arrays.asList(itemBtn1, itemBtn2, itemBtn3, itemBtn4, itemBtn5));
         this.battle = data;
         this.playerStatuses = new LinkedList<>();
         this.enemyStatuses = new LinkedList<>();
+        BattleLogger.initPane(this.battleLog);
         
-        root.setOnKeyReleased((event)->{
+        root.setOnKeyReleased(event->{
             switch(event.getCode()){
                 case KeyCode.DIGIT1:
                     attackButton.fire();
@@ -102,17 +84,24 @@ public class BattleViewController implements DataInitializable<Battle>{
                 case KeyCode.DIGIT5:
                     itemButton.fire();
                     break;
+                //debug
+                case KeyCode.H:
+                    InventoryService.addItemToInventory(turnHolder, new HealthPotion(5));
+                    break;
                 default:
                     break;
             }
         });
 
-        attackButton.setOnAction((event)->{ this.useAction(BattleActions.ATTACK); });
-        defendButton.setOnAction((event)->{ this.useAction(BattleActions.DEFEND); });
-        specialButton.setOnAction((event)->{ this.useAction(BattleActions.SPECIAL); });
+        attackButton.setOnAction(event-> this.useAction(BattleActions.ATTACK));
+        defendButton.setOnAction(event-> this.useAction(BattleActions.DEFEND));
+        specialButton.setOnAction(event-> this.useAction(BattleActions.SPECIAL));
 
-        spellButton.setOnAction((event)->toggleSpellsPane());
-        spellBack.setOnAction((event)->toggleSpellsPane());
+        spellButton.setOnAction(event->toggleSpellsPane());
+        spellBack.setOnAction(event->toggleSpellsPane());
+
+        itemButton.setOnAction(event->toggleItemPane());
+        itemBack.setOnAction(event->toggleItemPane());
 
         this.updateStatuses();
         this.handleTurnStart();
@@ -136,23 +125,44 @@ public class BattleViewController implements DataInitializable<Battle>{
         //Slight optimization, check if current turn holder is the same as the last time this was run, in that case don't update spells
         if(this.lastTurnHolder != null && this.lastTurnHolder.equals(this.turnHolder)) return;
         for(Button b: this.spellButtons){ b.setVisible(false); }
-        LinkedList<Spell> spells = this.turnHolder.getSpells();
+        List<Spell> spells = this.turnHolder.getSpells();
         for(int i = 0; i < spells.size(); i++){
             this.spellButtons.get(i).setVisible(true);
             this.spellButtons.get(i).setText(spells.get(i).toString());
             // Workaround for setting the spells without using i as it cannot be final
             int spellId = i;
-            this.spellButtons.get(i).setOnAction((event)->{ this.useAction(spellId); });
+            this.spellButtons.get(i).setOnAction(event->{ this.useAction(spellId); });
         }
         this.lastTurnHolder = this.turnHolder;
+    }
+
+    /**
+     * Toggles the visibility of the items pane and if it's made visible
+     * populates it taking the first 5 consumable items from the player's inventory
+     */
+    private void toggleItemPane(){
+        this.itemPane.setVisible(!this.itemPane.visibleProperty().get());
+        this.actionsPane.setVisible(!this.actionsPane.visibleProperty().get());
+        if(!this.itemPane.isVisible()) return;
+        for(Button b: this.itemButtons) b.setVisible(false);
+        List<Slot> slots = this.turnHolder.getInventory().getItemSlots();
+        int i = 0;
+        for(Slot s: slots){
+            if(s.getItem() != null && !(s.getItem().isEquippable()) && i < 5){
+                this.itemButtons.get(i).setVisible(true);
+                this.itemButtons.get(i).setText(s.getItem().toString());
+                this.itemButtons.get(i).setOnAction(event->{this.useItem((ItemSlot)s); this.toggleItemPane();});
+                i++;
+            }
+        }
     }
 
     /**
      * Updates the visible statuses for both players and enemies
      */
     private void updateStatuses(){
-        updateStatus(new LinkedList<Entity>(battle.getPlayers()), playerStatuses, playerStatus, true);
-        updateStatus(new LinkedList<Entity>(battle.getEnemies()), enemyStatuses, enemyStatus, false);
+        updateStatus(new LinkedList<>(battle.getPlayers()), playerStatuses, playerStatus, true);
+        updateStatus(new LinkedList<>(battle.getEnemies()), enemyStatuses, enemyStatus, false);
     }
 
     /**
@@ -163,16 +173,14 @@ public class BattleViewController implements DataInitializable<Battle>{
      * @param isPlayers whether or not we are updating player stats or not. Used to correctly set up selectors
      */
     private void updateStatus(LinkedList<Entity> entities, LinkedList<EntityStatus> statuses, HBox statusElement, boolean isPlayers){
-        if(entities.size() < statuses.size() || statuses.size() == 0){
+        if(entities.size() < statuses.size() || statuses.isEmpty()){
             if(isPlayers) playerSelectors = new LinkedList<>();
             else enemySelectors = new LinkedList<>();
             LinkedList<LinkedList<Node>> entityInfo = new LinkedList<>();
             // Add nodes to the entityInfo linked list, in order they are Button (name), Health and Mana
             for(Node n: statusElement.getChildren()){
                 VBox vb = (VBox)n;
-                vb.getChildren().forEach((node) -> {
-                    node.setVisible(false);
-                });
+                vb.getChildren().forEach(node -> node.setVisible(false));
                 entityInfo.add(new LinkedList<>(vb.getChildren()));
             }
             statuses = new LinkedList<>();
@@ -181,14 +189,11 @@ public class BattleViewController implements DataInitializable<Battle>{
                 SelectableEntity se = new SelectableEntity((Button)entityInfo.get(i).get(0), entity);
                 if(isPlayers) playerSelectors.add(se);
                 else enemySelectors.add(se);
-                entityInfo.get(i).forEach((node) -> {
-                    node.setVisible(true);
-                });
+                entityInfo.get(i).forEach(node -> node.setVisible(true));
                 statuses.add(new EntityStatus(se, (Labeled)entityInfo.get(i).get(1), (Labeled)entityInfo.get(i).get(2),
                 entity.getName(), entity.getStat(EntityStats.HEALTH), entity.getStat(EntityStats.MAXHEALTH),
                 entity.getStat(EntityStats.MANA), entity.getStat(EntityStats.MAXMANA)));
             }
-            entityInfo = null;
         }
         else{
             for(int i = 0; i < entities.size(); i++){
@@ -219,21 +224,23 @@ public class BattleViewController implements DataInitializable<Battle>{
      */
     private void handleTurnEnd(){
         if(this.battle.isFinished()){
-            try{
-                if(this.battle.getBattleService().isPlayerWin()){
-                    ViewDispatcher.getInstance().previousView();
+            this.battle.getBattleService().battleEnd();
+            if(this.battle.getBattleService().isPlayerWin()){
+                ViewDispatcher.getInstance().previousView();
+            }
+            else{
+                try{
+                    ViewDispatcher.getInstance().gameOver();
+                } catch(ViewException e){
+                    FileLogger.getInstance().error(e.getMessage());
                 }
-                else{
-                    //TODO: go to game over screen
-                }
-            } catch(ViewException e){
-                e.printStackTrace();
             }
         }
         else{
             if(spellsPane.isVisible()) toggleSpellsPane();
             battle.getBattleService().turnEnd();
             this.updateStatuses();
+            this.scrollPane.setVvalue(1.0);
             this.handleTurnStart();
         }
     }
@@ -270,7 +277,7 @@ public class BattleViewController implements DataInitializable<Battle>{
         for(SelectableEntity se: enemySelectors){ se.getButton().setDisable(true); }
         if(tt.equals(TargetTypes.ALL) || tt.equals(TargetTypes.ALLY) || tt.equals(TargetTypes.ALL_BUT_SELF) || tt.equals(TargetTypes.ALLY_SELF)){
             for(SelectableEntity se: playerSelectors){
-                if(se.getEntity().equals(this.turnHolder)) continue;
+                if(se.getEntity().equals(this.turnHolder) || !se.getEntity().isAlive()) continue;
                 this.assingAction(se, ba, spellId);
             }
         }
@@ -298,6 +305,9 @@ public class BattleViewController implements DataInitializable<Battle>{
             useAction(ba, this.turnHolder);
             return;
         }
+        else if(this.turnHolder.getActionTargets(ba).equals(TargetTypes.ALL_ENEMIES)){
+            useAction(ba, new LinkedList<>(this.battle.getEnemies()));
+        }
         this.setupSelectors(ba);
     }
 
@@ -323,9 +333,10 @@ public class BattleViewController implements DataInitializable<Battle>{
         switch (ba){
             case ATTACK:
                 try{
-                    this.battle.getBattleService().attack(target);
+                    this.battle.getBattleService().attack(turnHolder, target);
+                    this.handleTurnEnd();
                 } catch(MissingTargetException e){
-                    e.printStackTrace();
+                    FileLogger.getInstance().error(e.getMessage());
                 }
                 break;
             case DEFEND:
@@ -333,15 +344,32 @@ public class BattleViewController implements DataInitializable<Battle>{
                 break;
             case SPECIAL:
                 try{
-                    this.battle.getBattleService().special(target);
+                    this.battle.getBattleService().special(turnHolder, target);
+                    this.handleTurnEnd();
                 } catch(MissingTargetException e){
-                    e.printStackTrace();
+                    FileLogger.getInstance().error(e.getMessage());
                 }
                 break;
             default:
                 break;
         }
-        this.handleTurnEnd();
+    }
+
+    /**
+     * Method specific to battleActions that target multiple enemies,
+     * in this implementation the only supported method is special attacks
+     * @param ba battle action to be used
+     * @param targets list of targets
+     */
+    private void useAction(BattleActions ba, List<Entity> targets){
+        if(ba.equals(BattleActions.SPECIAL)){
+            try{
+                this.battle.getBattleService().special(turnHolder, targets);
+                this.handleTurnEnd();
+            } catch(MissingTargetException e){
+                FileLogger.getInstance().error(e.getMessage());
+            }
+        }
     }
 
     /**
@@ -351,13 +379,20 @@ public class BattleViewController implements DataInitializable<Battle>{
      */
     private void useSpell(int spellId, Entity target){
         try{
-            battle.getBattleService().spell(target, turnHolder.getSpells().get(spellId));
+            battle.getBattleService().spell(turnHolder.getSpells().get(spellId), turnHolder, target);
             this.handleTurnEnd();
-        } catch(MissingTargetException e){
-            e.printStackTrace();
-        } catch(MissingManaException e){
-            e.printStackTrace();
+        } catch(MissingTargetException | MissingManaException e){
+            FileLogger.getInstance().error(e.getMessage());
         }
+    }
+
+    /**
+     * Internal method that calls the battleservice's item use method and ends the turn
+     * @param slot
+     */
+    private void useItem(ItemSlot slot){
+        battle.getBattleService().item(turnHolder, slot);
+        this.handleTurnEnd();
     }
 
     /**
@@ -369,14 +404,10 @@ public class BattleViewController implements DataInitializable<Battle>{
      */
     private void assingAction(SelectableEntity se, BattleActions ba, int spellId){
         if(spellId < 0){
-            se.getButton().setOnAction((event)->{
-                useAction(ba, se.getEntity());
-            });
+            se.getButton().setOnAction(event-> useAction(ba, se.getEntity()));
         }
         else{
-            se.getButton().setOnAction((event)->{
-                useSpell(spellId, se.getEntity());
-            });
+            se.getButton().setOnAction(event-> useSpell(spellId, se.getEntity()));
         }
         se.getButton().setDisable(false);
     }

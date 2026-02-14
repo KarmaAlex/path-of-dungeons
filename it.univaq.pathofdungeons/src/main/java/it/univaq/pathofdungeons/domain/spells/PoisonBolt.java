@@ -17,6 +17,6 @@ public class PoisonBolt extends Spell{
     @Override
     public void applySpell(Entity source, Entity target) throws MissingTargetException{
         super.applySpell(source, target);
-        this.applySpellEffect(target);
+        this.applySpellEffect(source, target);
     }
 }

@@ -1,5 +1,7 @@
 package it.univaq.pathofdungeons.domain.dungeon;
 
+import it.univaq.pathofdungeons.utils.StringUtils;
+
 /**
  * Enumerator that represents the possible sizes of the dungeon
  */
@@ -16,4 +18,9 @@ public enum DungeonSizes {
     }
 
     public int size(){ return this.size; }
+
+    @Override
+    public String toString(){
+        return StringUtils.capitalizeSplit(this.name());
+    }
 }

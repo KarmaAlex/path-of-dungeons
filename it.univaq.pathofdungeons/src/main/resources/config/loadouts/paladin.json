@@ -1,14 +1,23 @@
 {
-    "helmet":{
+    "chestplate":{
         "base": {
-            "name": "Hunter hood",
-            "slot": "HELMET"
+            "name": "Paladin armor",
+            "slot": "CHESTPLATE"
         },
-        "effect":"BURN",
         "rarity":"COMMON",
         "stats":{
-            "CRITCHANCE":1,
-            "MAXHEALTH":15
+            "MAXHEALTH":20,
+            "PHYSDEFENCE":10
+        }
+    },
+    "weapon":{
+        "base": {
+            "name": "Magic hammer",
+            "slot": "WEAPON"
+        },
+        "rarity": "COMMON",
+        "stats": {
+            "PHYSDAMAGE": 15
         }
     }
 }

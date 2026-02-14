@@ -4,11 +4,21 @@
             "name": "Hunter hood",
             "slot": "HELMET"
         },
-        "effect":"BURN",
         "rarity":"COMMON",
         "stats":{
             "CRITCHANCE":1,
             "MAXHEALTH":15
+        }
+    },
+    "chestplate":{
+        "base": {
+            "name": "Hunter chestplate",
+            "slot": "CHESTPLATE"
+        },
+        "rarity": "COMMON",
+        "stats": {
+            "MAXHEALTH": 15,
+            "PHYSDEFENCE": 5
         }
     }
 }

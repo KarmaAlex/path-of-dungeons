@@ -14,6 +14,6 @@ public class Haste extends Spell{
 
     @Override
     public void applySpell(Entity source, Entity target){
-        this.applySpellEffect(source);
+        this.applySpellEffect(source, source);
     }
 }

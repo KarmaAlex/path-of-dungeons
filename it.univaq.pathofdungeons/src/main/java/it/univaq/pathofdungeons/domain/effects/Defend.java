@@ -7,7 +7,7 @@ public class Defend extends Effect{
     private static final float DEFENCE_MULT = 0.25f;
 
     public Defend(){
-        super(Effects.DEFEND);
+        super(Effects.DEFEND ,false);
     }
 
     @Override
@@ -17,7 +17,7 @@ public class Defend extends Effect{
     }
 
     @Override
-    public void onApply(Entity target){
+    public void onApply(Entity source, Entity target){
         target.updateStat(EntityStats.PHYSDEFENCE, (int) (target.getStat(EntityStats.PHYSDEFENCE) * DEFENCE_MULT));
     }
 }

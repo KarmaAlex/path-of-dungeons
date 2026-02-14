@@ -1,5 +1,9 @@
 package it.univaq.pathofdungeons.domain.items;
 
+/**
+ * Class for extra info tied to a stat for an equippable item, mostly contains info useful for
+ * random generation, like what weight the stat should have and min and max rolls
+ */
 public class EquippableStatInfo {
     private int weight;
     private int min;
